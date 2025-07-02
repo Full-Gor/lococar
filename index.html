@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LuxDrive - Location de Voitures de Luxe</title>
+  <meta name="description" content="Découvrez notre sélection de véhicules de luxe pour une expérience de conduite inoubliable. Location courte et longue durée disponible.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset and base styles */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+      color: #111827;
+    }
+
+    /* Header styles */
+    .header {
+      position: relative;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .video-container {
+      position: absolute;
+      inset: 0;
+      background: black;
+    }
+
+    .video-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 10;
+    }
+
+    .header video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Navigation */
+    .nav {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: white;
+      text-decoration: none;
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: #D4AF37;
+      }
+    }
+
+    /* Hero content */
+    .hero-content {
+      position: relative;
+      z-index: 20;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+      padding: 1.5rem;
+    }
+
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      animation: fadeDown 1s ease-out;
+    }
+
+    .hero-description {
+      font-size: 1.25rem;
+      max-width: 48rem;
+      margin-bottom: 2rem;
+      animation: fadeUp 1s ease-out 0.3s backwards;
+    }
+
+    .hero-button {
+      background: #D4AF37;
+      color: black;
+      font-weight: bold;
+      padding: 0.75rem 2rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: all 0.3s;
+      transform: scale(1);
+      animation: fadeIn 1s ease-out 0.6s backwards;
+    }
+
+    .hero-button:hover {
+      background: #AA8C2C;
+      transform: scale(1.05);
+    }
+
+    /* Car showcase */
+    .showcase {
+      padding: 4rem 1.5rem;
+      background: white;
+    }
+
+    .showcase-title {
+      font-size: 2.25rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .car-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 80rem;
+      margin: 0 auto;
+    }
+
+    .car-card {
+      perspective: 1000px;
+      height: 400px;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.7s;
+      transform-style: preserve-3d;
+    }
+
+    .car-card:hover .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front,
+    .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+
+    .card-front img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-back {
+      background: white;
+      padding: 1.5rem;
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .car-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .car-emissions {
+      color: #6B7280;
+      margin-bottom: 1rem;
+    }
+
+    .car-description {
+      font-size: 0.875rem;
+      color: #4B5563;
+      margin-bottom: 1rem;
+      flex-grow: 1;
+    }
+
+    .car-price {
+      color: #D4AF37;
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .card-buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .card-button {
+      flex: 1;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .button-try {
+      background: #F3F4F6;
+      color: #111827;
+    }
+
+    .button-try:hover {
+      background: #E5E7EB;
+    }
+
+    .button-offer {
+      background: #D4AF37;
+      color: white;
+    }
+
+    .button-offer:hover {
+      background: #AA8C2C;
+    }
+
+    /* Modal styles */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 50;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 0.5rem;
+      max-width: 32rem;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: #6B7280;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      color: #111827;
+    }
+
+    /* Animations */
+    @keyframes fadeDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Scroll to top button */
+    .scroll-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: #D4AF37;
+      color: white;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+    }
+
+    .scroll-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .scroll-top:hover {
+      background: #AA8C2C;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="video-container">
+      <div class="video-overlay"></div>
+      <video autoplay muted loop playsinline>
+        <source src="https://player.vimeo.com/external/539369399.sd.mp4?s=a99121934d2c4f8ef0c68f68b24d98d5be0c8a1b&profile_id=164&oauth2_token_id=57447761" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <nav class="nav">
+      <a href="#" class="logo">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.3 16 9 12 9s-6.7 1.3-8.5 2.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2"></path>
+          <path d="M19 17v2c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-2"></path>
+          <path d="M6 8l3-3h6l3 3"></path>
+          <path d="M5 11l2.5-2.5"></path>
+          <path d="M19 11l-2.5-2.5"></path>
+        </svg>
+        <span class="logo-text">LuxDrive</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#models">Modèles</a>
+        <a href="#electric">Gamme Électrique</a>
+        <a href="#used">Occasions</a>
+      </div>
+    </nav>
+
+    <div class="hero-content">
+      <h1 class="hero-title">Expérience de Conduite Exceptionnelle</h1>
+      <p class="hero-description">
+        Découvrez notre sélection de véhicules de luxe pour une expérience de conduite inoubliable
+      </p>
+      <a href="#models" class="hero-button">Découvrir nos véhicules</a>
+    </div>
+  </header>
+
+  <main>
+    <section id="models" class="showcase">
+      <h2 class="showcase-title">Notre Collection de Véhicules</h2>
+      <div class="car-grid" id="carGrid"></div>
+    </section>
+  </main>
+
+  <button class="scroll-top" id="scrollTop" aria-label="Retour en haut">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
+
+  <script>
+    // Car data
+    const cars = [
+      {
+        id: 1,
+        name: 'Model S',
+        brand: 'Tesla',
+        image: 'https://images.pexels.com/photos/12667210/pexels-photo-12667210.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+        pollutionQuota: '0g CO₂/km',
+        pricePerMonth: 999,
+        category: 'electric',
+        description: 'Experience the future of driving with Tesla Model S, featuring dual motor all-wheel drive, adaptive air suspension, and up to 405 miles of range.'
+      },
+      {
+        id: 2,
+        name: 'S-Class',
+        brand: 'Mercedes-Benz',
+        image: 'https://images.pexels.com/photos/6894430/pexels-photo-6894430.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+        pollutionQuota: '152g CO₂/km',
+        pricePerMonth: 1299,
+        category: 'standard',
+        description: 'The Mercedes-Benz S-Class stands for the fascination of the brand and defines the standards for luxury, comfort and safety.'
+      },
+      {
+        id: 3,
+        name: 'Taycan',
+        brand: 'Porsche',
+        image: 'https://images.pexels.com/photos/13033513/pexels-photo-13033513.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+        pollutionQuota: '0g CO₂/km',
+        pricePerMonth: 1499,
+        category: 'electric',
+        description: 'The Porsche Taycan brings electrifying performance and cutting-edge technology to the Porsche lineup, setting new standards for electric vehicles.'
+      }
+    ];
+
+    // Create car cards
+    const carGrid = document.getElementById('carGrid');
+    cars.forEach(car => {
+      const card = document.createElement('div');
+      card.className = 'car-card';
+      card.innerHTML = `
+        <div class="card-inner">
+          <div class="card-front">
+            <img src="${car.image}" alt="${car.brand} ${car.name}">
+          </div>
+          <div class="card-back">
+            <h3 class="car-title">${car.brand} ${car.name}</h3>
+            <p class="car-emissions">Émissions: ${car.pollutionQuota}</p>
+            <p class="car-description">${car.description}</p>
+            <div class="car-price">${car.pricePerMonth}€ / mois</div>
+            <div class="card-buttons">
+              <button class="card-button button-try">Essayer</button>
+              <button class="card-button button-offer" onclick="openModal(${car.id})">Demander une offre</button>
+            </div>
+          </div>
+        </div>
+      `;
+      carGrid.appendChild(card);
+    });
+
+    // Scroll to top functionality
+    const scrollTop = document.getElementById('scrollTop');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        scrollTop.classList.add('visible');
+      } else {
+        scrollTop.classList.remove('visible');
+      }
+    });
+
+    scrollTop.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // Modal functionality
+    function openModal(carId) {
+      const car = cars.find(c => c.id === carId);
+      if (!car) return;
+
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="text-xl font-bold">Demande d'offre</h3>
+            <button class="modal-close" onclick="closeModal(this)">×</button>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <img src="${car.image}" alt="${car.name}" class="w-20 h-20 object-cover rounded-md mr-4">
+              <div>
+                <h4 class="font-bold">${car.brand} ${car.name}</h4>
+                <p class="text-gray-500">${car.pricePerMonth}€ / mois</p>
+              </div>
+            </div>
+            <!-- Add more modal content here -->
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(button) {
+      const modal = button.closest('.modal');
+      modal.remove();
+      document.body.style.overflow = '';
+    }
+  </script>
+</body>
+</html>
